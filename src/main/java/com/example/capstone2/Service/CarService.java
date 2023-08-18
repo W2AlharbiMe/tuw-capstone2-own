@@ -18,7 +18,6 @@ import java.util.List;
 public class CarService {
 
     private final CarRepository carRepository;
-//    private final ManufacturerCarService manufacturerCarService;
     private final ManufacturerService manufacturerService;
 
     public List<Car> findAll() {
@@ -34,12 +33,6 @@ public class CarService {
 
         return car;
     }
-
-//    public boolean manufacturerHaveOneCar(Integer manufacturerId) {
-//        Car car = carRepository.findAtLeastOneManufacturerId(manufacturerId);
-//
-//        return car == null;
-//    }
 
     public Car findCarBySerialNumber(String serialNumber) throws ResourceNotFoundException {
         Car car = carRepository.findCarBySerialNumber(serialNumber);
@@ -93,7 +86,7 @@ public class CarService {
         }
 
         // this will throw SimpleException in case no Manufacturer with manufacturer id
-//        manufacturerCarService.ensureManufacturerExists(updateCarDTO.getManufacturerId());
+        manufacturerService.manufacturerExists(updateCarDTO.getManufacturerId());
 
         car.setModel(updateCarDTO.getModel());
         car.setType(updateCarDTO.getType());

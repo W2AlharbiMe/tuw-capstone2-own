@@ -2,6 +2,7 @@ package com.example.capstone2.DTO;
 
 
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,4 +20,7 @@ public class UpdateSalesPersonDTO {
     @NotEmpty(message = "the password field is required.")
     @Pattern(message = "the password must contain at least seven characters, at least one number and both lower and uppercase letters and special characters", regexp = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$")
     private String password;
+
+    @NotNull(message = "the salary field is required.")
+    private Double salary;
 }

@@ -22,7 +22,7 @@ public class ControllerAdvice {
     @ExceptionHandler(value = ResourceNotFoundException.class)
     public ResponseEntity<SimpleApiResponse> ApiException(ResourceNotFoundException e){
         String message = e.getMessage();
-        return ResponseEntity.status(400).body(new SimpleApiResponse(message));
+        return ResponseEntity.status(404).body(new SimpleApiResponse(message));
     }
 
     @ExceptionHandler(value = SimpleException.class)
@@ -44,7 +44,7 @@ public class ControllerAdvice {
     @ExceptionHandler(value = ConstraintViolationException.class)
     public ResponseEntity<SimpleApiResponse> ConstraintViolationException(ConstraintViolationException e) {
         String msg = e.getMessage();
-        return ResponseEntity.status(400).body(new SimpleApiResponse(msg));
+        return ResponseEntity.status(500).body(new SimpleApiResponse(msg));
     }
 
 
@@ -52,20 +52,26 @@ public class ControllerAdvice {
     @ExceptionHandler(value = SQLIntegrityConstraintViolationException.class)
     public ResponseEntity<SimpleApiResponse> SQLIntegrityConstraintViolationException(SQLIntegrityConstraintViolationException e){
         String msg = e.getMessage();
-        return ResponseEntity.status(400).body(new SimpleApiResponse(msg));
+        return ResponseEntity.status(401).body(new SimpleApiResponse(msg));
     }
 
     // wrong write SQL in @column Exception
     @ExceptionHandler(value = InvalidDataAccessResourceUsageException.class )
     public ResponseEntity<SimpleApiResponse> InvalidDataAccessResourceUsageException(InvalidDataAccessResourceUsageException e){
         String msg = e.getMessage();
-        return ResponseEntity.status(200).body(new SimpleApiResponse(msg));
+        return ResponseEntity.status(400).body(new SimpleApiResponse(msg));
     }
 
     // Database Constraint Exception
     @ExceptionHandler(value = DataIntegrityViolationException.class)
     public ResponseEntity<SimpleApiResponse> DataIntegrityViolationException(DataIntegrityViolationException e){
         String msg = e.getMessage();
+        System.out.println(e.getCause().toString());
+
+        if(e.getMessage().toLowerCase().contains("duplicate entry")) {
+            return ResponseEntity.status(400).body(new SimpleApiResponse("duplicated entry."));
+        }
+
         return ResponseEntity.status(400).body(new SimpleApiResponse(msg));
     }
 

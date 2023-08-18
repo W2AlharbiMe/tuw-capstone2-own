@@ -18,7 +18,7 @@ public class Car {
 
     @NotEmpty(message = "the model field is required.")
     @Size(min = 4, message = "the model must be at least 4 chars.")
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String model;
 
     /**
@@ -42,9 +42,19 @@ public class Car {
 
     @NotNull(message = "the serial number field is required.")
     @Size(min = 17, max = 17, message = "the serial number must be 17 chars.")
-    @Pattern(message = "the serial number must be like: '1ftfw1et4bfc45903'", regexp = "^[A-HJ-NPR-Za-hj-npr-z\\d]{8}[\\dX][A-HJ-NPR-Za-hj-npr-z\\d]{2}\\d{6}$")
+    @Pattern(message = "the serial number must be like: '1ftfw1et4bf445903', the first 8 must contain chars and numbers then 1 either a digit or a capital letter X, next a 2 chars, finally 6 digits.", regexp = "^(?=.*\\d|[A-z])(?=.*[A-z])[A-z0-9]{17}$")
     @Column(nullable = false, unique = true)
     private String serialNumber;
+
+    // first part:
+    // 1b2v3c4v
+    // second part:
+    // X
+    // third part:
+    // na
+    // last part:
+    // 123456
+    // all combined: 1b2v3c4vXna123456 1ftfw1et
 
     @NotNull(message = "the seats count is required.")
     @Positive(message = "the seats count must be positive number.")
@@ -59,4 +69,46 @@ public class Car {
     @NotNull(message = "the manufacturer id field is required.")
     @Column(nullable = false)
     private Integer manufacturerId;
+
+    // this should generate unique VIN.
+    public void generateSerialNumber() {
+        String generated = "";
+        char[] chars = {
+                'A', 'b', 'c',
+                'd', 'E', 'F',
+                'J', 'K', 'n',
+                'a', 'b', 'c', 'd', 'j', 'f', 'k'
+        };
+        char X = 'X';
+        int second_part = (int) Math.floor(Math.random() * 10);
+
+        // first part 8 chars
+        for (int i = 1; i <= 8; i++) {
+            int random_char_index = (int) Math.floor(Math.random() * chars.length);
+            generated += chars[random_char_index];
+        }
+
+        // second part either char 'X' or a digit
+        if(second_part > 11) {
+            generated += X;
+        } else {
+            generated += second_part;
+        }
+
+        // third part:
+        for (int i = 0; i < 3; i++) {
+            int random_char_index = (int) Math.floor(Math.random() * chars.length);
+            generated += chars[random_char_index];
+        }
+
+        // last part
+        for (int i = 0; i < 5; i++) {
+            int last_part = (int) Math.floor(Math.random() * 10);
+            generated += last_part;
+        }
+
+        System.out.println(generated);
+
+        serialNumber = generated;
+    }
 }

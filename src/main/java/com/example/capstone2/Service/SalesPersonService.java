@@ -72,6 +72,7 @@ public class SalesPersonService {
         salesPerson.setName(updateSalesPersonDTO.getName());
         salesPerson.setUsername(updateSalesPersonDTO.getUsername());
         salesPerson.setPassword(updateSalesPersonDTO.getPassword());
+        salesPerson.setSalary(updateSalesPersonDTO.getSalary());
 
 
         salesPersonRepository.save(salesPerson);

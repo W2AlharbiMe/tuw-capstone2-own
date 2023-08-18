@@ -51,7 +51,7 @@ public class CarsController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<HashMap<String, Object>> updateCar(@PathVariable Integer id) throws ResourceNotFoundException {
+    public ResponseEntity<HashMap<String, Object>> deleteCar(@PathVariable Integer id) throws ResourceNotFoundException {
         return ResponseEntity.ok(carService.deleteCar(id));
     }
 }

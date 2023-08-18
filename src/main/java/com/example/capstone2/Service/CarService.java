@@ -86,7 +86,7 @@ public class CarService {
         }
 
         // this will throw SimpleException in case no Manufacturer with manufacturer id
-//        manufacturerCarService.ensureManufacturerExists(updateCarDTO.getManufacturerId());
+        manufacturerService.manufacturerExists(updateCarDTO.getManufacturerId());
 
         car.setModel(updateCarDTO.getModel());
         car.setType(updateCarDTO.getType());

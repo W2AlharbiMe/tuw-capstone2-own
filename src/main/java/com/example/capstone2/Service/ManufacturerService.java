@@ -1,6 +1,7 @@
 package com.example.capstone2.Service;
 
 import com.example.capstone2.Api.Exception.ResourceNotFoundException;
+import com.example.capstone2.Api.Exception.SimpleException;
 import com.example.capstone2.DTO.UpdateManufacturerDTO;
 import com.example.capstone2.Model.Manufacturer;
 import com.example.capstone2.Repository.ManufacturerRepository;
@@ -15,14 +16,14 @@ import java.util.List;
 public class ManufacturerService {
 
     private final ManufacturerRepository manufacturerRepository;
-    private final HashMap<String, Object> response = new HashMap<>();
+    private final ManufacturerCarService manufacturerCarService;
 
 
     public List<Manufacturer> findAll() {
         return manufacturerRepository.findAll();
     }
 
-    public Manufacturer findById(Integer id) {
+    public Manufacturer findById(Integer id) throws ResourceNotFoundException {
         Manufacturer manufacturer = manufacturerRepository.findManufacturerById(id);
 
         if(manufacturer == null) {
@@ -32,7 +33,13 @@ public class ManufacturerService {
         return manufacturer;
     }
 
-    public List<Manufacturer> searchByName(String name) {
+    public void manufacturerExists(Integer id) throws SimpleException {
+        if(manufacturerRepository.findManufacturerById(id) == null) {
+            throw new SimpleException("no manufacturer found from the manufacturer id you provided.");
+        }
+    }
+
+    public List<Manufacturer> searchByName(String name) throws ResourceNotFoundException {
         List<Manufacturer> manufacturers = manufacturerRepository.lookByName(name);
 
         if(manufacturers.isEmpty()) {
@@ -52,7 +59,7 @@ public class ManufacturerService {
         return response;
     }
 
-    public HashMap<String, Object> updateManufacturer(Integer id, UpdateManufacturerDTO manufacturerDTO) {
+    public HashMap<String, Object> updateManufacturer(Integer id, UpdateManufacturerDTO manufacturerDTO) throws ResourceNotFoundException {
         Manufacturer old_manufacturer = manufacturerRepository.findManufacturerById(id);
 
         if(old_manufacturer == null) {
@@ -71,19 +78,24 @@ public class ManufacturerService {
         return response;
     }
 
-    public HashMap<String, Object> deleteManufacturer(Integer id) {
+    public HashMap<String, Object> deleteManufacturer(Integer id) throws ResourceNotFoundException, SimpleException {
         Manufacturer manufacturer = manufacturerRepository.findManufacturerById(id);
 
         if(manufacturer == null) {
             throw new ResourceNotFoundException("manufacturer");
         }
 
+        manufacturerCarService.ensureManufacturerHaveOneCar(id);
+
         manufacturerRepository.deleteById(id);
 
+        HashMap<String, Object> response = new HashMap<>();
         response.put("message", "the manufacturer have been deleted.");
         response.put("manufacturer", manufacturer);
 
         return response;
     }
+
+
 
 }

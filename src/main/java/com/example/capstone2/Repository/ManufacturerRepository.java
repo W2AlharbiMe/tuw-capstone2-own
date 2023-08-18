@@ -12,6 +12,8 @@ public interface ManufacturerRepository extends JpaRepository<Manufacturer, Inte
 
     public Manufacturer findManufacturerById(Integer id);
 
+    public Manufacturer findManufacturerByName(String name);
+
     @Query("SELECT m FROM manufacturers m WHERE m.name LIKE '%' || ?1 || '%' ")
     public List<Manufacturer> lookByName(String name);
 

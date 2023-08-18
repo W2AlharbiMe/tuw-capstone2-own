@@ -50,7 +50,11 @@ public class ManufacturerService {
         return manufacturers;
     }
 
-    public HashMap<String, Object> addManufacturer(Manufacturer manufacturer) {
+    public HashMap<String, Object> addManufacturer(Manufacturer manufacturer) throws SimpleException {
+        if(manufacturerRepository.findManufacturerByName(manufacturer.getName()) != null) {
+            throw new SimpleException("there's a manufacturer with the same name.");
+        }
+
         Manufacturer saved_manufacturer = manufacturerRepository.save(manufacturer);
 
         HashMap<String, Object> response = new HashMap<>();

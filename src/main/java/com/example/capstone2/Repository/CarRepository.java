@@ -14,7 +14,7 @@ public interface CarRepository extends JpaRepository<Car, Integer> {
 
     public Car findCarBySerialNumber(String serialNumber);
 
-    @Query("SELECT c.id FROM cars c WHERE c.manufacturerId = ?1 LIMIT 1")
+    @Query("SELECT c.id FROM cars c WHERE c.manufacturerId = ?1 ORDER BY c.id ASC LIMIT 1")
     public Car findAtLeastOneManufacturerId(Integer manufacturerId);
 
 

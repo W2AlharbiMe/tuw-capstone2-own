@@ -4,6 +4,7 @@ import com.example.capstone2.Api.Exception.ResourceNotFoundException;
 import com.example.capstone2.Api.Exception.SimpleException;
 import com.example.capstone2.DTO.UpdateManufacturerDTO;
 import com.example.capstone2.Model.Manufacturer;
+import com.example.capstone2.Repository.CarRepository;
 import com.example.capstone2.Repository.ManufacturerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,7 +17,7 @@ import java.util.List;
 public class ManufacturerService {
 
     private final ManufacturerRepository manufacturerRepository;
-    private final ManufacturerCarService manufacturerCarService;
+    private final CarRepository carRepository;
 
 
     public List<Manufacturer> findAll() {
@@ -85,7 +86,10 @@ public class ManufacturerService {
             throw new ResourceNotFoundException("manufacturer");
         }
 
-        manufacturerCarService.ensureManufacturerHaveOneCar(id);
+
+        if(carRepository.findAtLeastOneManufacturerId(id) != null) {
+            throw new SimpleException("you cannot delete this manufacturer because there are cars that have been manufactured by them.");
+        }
 
         manufacturerRepository.deleteById(id);
 

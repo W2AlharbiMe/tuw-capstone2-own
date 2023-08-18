@@ -2,6 +2,7 @@ package com.example.capstone2.Service;
 
 import com.example.capstone2.Api.Exception.ResourceNotFoundException;
 import com.example.capstone2.Api.Exception.SimpleException;
+import com.example.capstone2.DTO.AddCarDTO;
 import com.example.capstone2.DTO.UpdateCarDTO;
 import com.example.capstone2.Model.Car;
 import com.example.capstone2.Model.Manufacturer;
@@ -17,7 +18,8 @@ import java.util.List;
 public class CarService {
 
     private final CarRepository carRepository;
-    private final ManufacturerCarService manufacturerCarService;
+//    private final ManufacturerCarService manufacturerCarService;
+    private final ManufacturerService manufacturerService;
 
     public List<Car> findAll() {
         return carRepository.findAll();
@@ -33,11 +35,11 @@ public class CarService {
         return car;
     }
 
-    public boolean manufacturerHaveOneCar(Integer manufacturerId) {
-        Car car = carRepository.findAtLeastOneManufacturerId(manufacturerId);
-
-        return car == null;
-    }
+//    public boolean manufacturerHaveOneCar(Integer manufacturerId) {
+//        Car car = carRepository.findAtLeastOneManufacturerId(manufacturerId);
+//
+//        return car == null;
+//    }
 
     public Car findCarBySerialNumber(String serialNumber) throws ResourceNotFoundException {
         Car car = carRepository.findCarBySerialNumber(serialNumber);
@@ -59,12 +61,20 @@ public class CarService {
         return cars;
     }
 
-    public HashMap<String, Object> addCar(Car car) throws SimpleException {
+    public HashMap<String, Object> addCar(AddCarDTO addCarDTO) throws SimpleException {
         // make sure that there provided manufacturerId exists.
-        manufacturerCarService.ensureManufacturerExists(car.getManufacturerId());
+        manufacturerService.manufacturerExists(addCarDTO.getManufacturerId());
 
-        car.setType(car.getType().toLowerCase()); // ensure stored type not like SaDeN etc...
-        car.setColor(car.getColor().toLowerCase()); // ensure stored color not like ReD, GrEen etc...
+
+        Car car = new Car();
+
+        car.setType(addCarDTO.getType().toLowerCase()); // ensure stored type not like SaDeN etc...
+        car.setColor(addCarDTO.getColor().toLowerCase()); // ensure stored color not like ReD, GrEen etc...
+        car.setModel(addCarDTO.getModel());
+        car.setReleaseYear(addCarDTO.getReleaseYear());
+        car.setSeatsCount(addCarDTO.getSeatsCount());
+        car.setManufacturerId(addCarDTO.getManufacturerId());
+        car.generateSerialNumber();
 
         Car saved_car = carRepository.save(car);
 
@@ -83,7 +93,7 @@ public class CarService {
         }
 
         // this will throw SimpleException in case no Manufacturer with manufacturer id
-        manufacturerCarService.ensureManufacturerExists(updateCarDTO.getManufacturerId());
+//        manufacturerCarService.ensureManufacturerExists(updateCarDTO.getManufacturerId());
 
         car.setModel(updateCarDTO.getModel());
         car.setType(updateCarDTO.getType());

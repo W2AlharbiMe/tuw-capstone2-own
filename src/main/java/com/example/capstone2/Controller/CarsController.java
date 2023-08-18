@@ -2,6 +2,7 @@ package com.example.capstone2.Controller;
 
 import com.example.capstone2.Api.Exception.ResourceNotFoundException;
 import com.example.capstone2.Api.Exception.SimpleException;
+import com.example.capstone2.DTO.AddCarDTO;
 import com.example.capstone2.DTO.UpdateCarDTO;
 import com.example.capstone2.Model.Car;
 import com.example.capstone2.Service.CarService;
@@ -41,8 +42,8 @@ public class CarsController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<HashMap<String, Object>> addCar(@RequestBody @Valid Car car) throws SimpleException {
-        return ResponseEntity.status(HttpStatus.CREATED).body(carService.addCar(car));
+    public ResponseEntity<HashMap<String, Object>> addCar(@RequestBody @Valid AddCarDTO addCarDTO) throws SimpleException {
+        return ResponseEntity.status(HttpStatus.CREATED).body(carService.addCar(addCarDTO));
     }
 
     @PutMapping("/update/{id}")

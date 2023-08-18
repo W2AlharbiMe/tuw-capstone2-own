@@ -2,12 +2,15 @@ package com.example.capstone2.Advice;
 
 import com.example.capstone2.Api.Exception.ResourceNotFoundException;
 import com.example.capstone2.Api.Exception.SimpleException;
+import com.example.capstone2.Api.Response.ErrorResponse;
 import com.example.capstone2.Api.Response.SimpleApiResponse;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.InvalidDataAccessResourceUsageException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -15,6 +18,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.sql.SQLIntegrityConstraintViolationException;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestControllerAdvice
 public class ControllerAdvice {
@@ -35,16 +40,22 @@ public class ControllerAdvice {
 
     // Server Validation Exception
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
-    public ResponseEntity<SimpleApiResponse> MethodArgumentNotValidException(MethodArgumentNotValidException e) {
-        String msg = e.getFieldError().getDefaultMessage();
-        return ResponseEntity.status(400).body(new SimpleApiResponse(msg));
+    public ResponseEntity<List<ErrorResponse>> MethodArgumentNotValidException(MethodArgumentNotValidException e) {
+        ArrayList<ErrorResponse> errorResponses = new ArrayList<>();
+
+        for(FieldError fieldError: e.getFieldErrors()) {
+            ErrorResponse errorResponse = new ErrorResponse(fieldError.getObjectName(), fieldError.getDefaultMessage(), fieldError.getField(), fieldError.getCode());
+            errorResponses.add(errorResponse);
+        }
+
+        return ResponseEntity.status(400).body(errorResponses);
     }
 
     // Server Validation Exception
     @ExceptionHandler(value = ConstraintViolationException.class)
     public ResponseEntity<SimpleApiResponse> ConstraintViolationException(ConstraintViolationException e) {
         String msg = e.getMessage();
-        return ResponseEntity.status(500).body(new SimpleApiResponse(msg));
+        return ResponseEntity.status(400).body(new SimpleApiResponse(msg));
     }
 
 
@@ -52,7 +63,7 @@ public class ControllerAdvice {
     @ExceptionHandler(value = SQLIntegrityConstraintViolationException.class)
     public ResponseEntity<SimpleApiResponse> SQLIntegrityConstraintViolationException(SQLIntegrityConstraintViolationException e){
         String msg = e.getMessage();
-        return ResponseEntity.status(401).body(new SimpleApiResponse(msg));
+        return ResponseEntity.status(400).body(new SimpleApiResponse(msg));
     }
 
     // wrong write SQL in @column Exception

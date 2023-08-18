@@ -53,7 +53,7 @@ public class CarService {
         List<Car> cars = carRepository.findAllManufacturerCars(manufacturerId);
 
         if(cars.isEmpty()) {
-            throw new SimpleException("no cars are found with the manufacturer id you provided.");
+            throw new SimpleException("no cars found with the manufacturer id you provided.");
         }
 
         return cars;

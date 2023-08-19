@@ -5,6 +5,7 @@ import com.example.capstone2.Api.Exception.SimpleException;
 import com.example.capstone2.DTO.UpdateCustomerDTO;
 import com.example.capstone2.Model.Customer;
 import com.example.capstone2.Repository.CustomerRepository;
+import com.example.capstone2.Repository.SalesInvoiceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +17,8 @@ import java.util.List;
 public class CustomerService {
 
     private final CustomerRepository customerRepository;
+    private final SalesInvoiceRepository salesInvoiceRepository;
+
 
 
     public List<Customer> findAll() {
@@ -30,6 +33,12 @@ public class CustomerService {
         }
 
         return customer;
+    }
+
+    public void customerExists(Integer id) throws SimpleException {
+        if(customerRepository.findCustomerById(id) == null) {
+            throw new SimpleException("no customer found with the customer id you provided.");
+        }
     }
 
     public Customer findByNationalId(String nationalId) throws ResourceNotFoundException {
@@ -100,11 +109,15 @@ public class CustomerService {
         return response;
     }
 
-    public HashMap<String, Object> deleteCustomer(Integer id) throws ResourceNotFoundException {
+    public HashMap<String, Object> deleteCustomer(Integer id) throws ResourceNotFoundException, SimpleException {
         Customer customer = customerRepository.findCustomerById(id);
 
         if(customer == null) {
             throw new ResourceNotFoundException("customer");
+        }
+
+        if(salesInvoiceRepository.atCustomerHaveLeastOneInvoice(id) != null) {
+            throw new SimpleException("you cannot delete this customer because there's a registered invoice with this customer id.");
         }
 
         customerRepository.deleteById(id);

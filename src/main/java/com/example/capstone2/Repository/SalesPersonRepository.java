@@ -17,7 +17,8 @@ public interface SalesPersonRepository extends JpaRepository<SalesPerson, Intege
     @Query("SELECT c FROM sales_persons c WHERE c.name LIKE '%' || ?1 || '%' ")
     public List<SalesPerson> lookByName(String name);
 
-    @Query("SELECT s.id FROM sales_persons s WHERE s.username = ?1 AND s.password = ?2")
+    // only login active users.
+    @Query("SELECT s FROM sales_persons s WHERE s.username = ?1 AND s.password = ?2 AND s.active = true ")
     SalesPerson login(String username, String password);
 
 }

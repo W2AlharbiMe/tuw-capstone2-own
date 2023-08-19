@@ -36,7 +36,7 @@ public class ManufacturerService {
 
     public void manufacturerExists(Integer id) throws SimpleException {
         if(manufacturerRepository.findManufacturerById(id) == null) {
-            throw new SimpleException("no manufacturer found from the manufacturer id you provided.");
+            throw new SimpleException("no manufacturer found with the manufacturer id you provided.");
         }
     }
 

@@ -7,6 +7,7 @@ import com.example.capstone2.DTO.UpdateCarDTO;
 import com.example.capstone2.Model.Car;
 import com.example.capstone2.Model.Manufacturer;
 import com.example.capstone2.Repository.CarRepository;
+import com.example.capstone2.Repository.SalesInvoiceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +20,8 @@ public class CarService {
 
     private final CarRepository carRepository;
     private final ManufacturerService manufacturerService;
+    private final SalesInvoiceRepository salesInvoiceRepository;
+
 
     public List<Car> findAll() {
         return carRepository.findAll();
@@ -32,6 +35,12 @@ public class CarService {
         }
 
         return car;
+    }
+
+    public void carExists(Integer id) throws SimpleException {
+        if(carRepository.findCarById(id) == null) {
+            throw new SimpleException("no car found with the car id you provided.");
+        }
     }
 
     public Car findCarBySerialNumber(String serialNumber) throws ResourceNotFoundException {
@@ -104,11 +113,15 @@ public class CarService {
         return response;
     }
 
-    public HashMap<String, Object> deleteCar(Integer id) throws ResourceNotFoundException {
+    public HashMap<String, Object> deleteCar(Integer id) throws ResourceNotFoundException, SimpleException {
         Car car = carRepository.findCarById(id);
 
         if(car == null) {
             throw new ResourceNotFoundException("car");
+        }
+
+        if(salesInvoiceRepository.lookForSalesByCarId(id) != null) {
+            throw new SimpleException("you cannot delete this car because there's a registered invoice with this car id.");
         }
 
         carRepository.deleteById(id);

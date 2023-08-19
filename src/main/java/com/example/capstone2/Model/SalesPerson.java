@@ -40,4 +40,8 @@ public class SalesPerson {
     @Positive(message = "the salary must be positive number.")
     @Column(nullable = false)
     private Double salary;
+
+
+    @Column(columnDefinition = "bit(1) default 1")
+    private Boolean active = true;
 }

@@ -23,4 +23,7 @@ public class UpdateSalesPersonDTO {
 
     @NotNull(message = "the salary field is required.")
     private Double salary;
+
+    @NotNull(message = "the field active is required.")
+    private Boolean active;
 }

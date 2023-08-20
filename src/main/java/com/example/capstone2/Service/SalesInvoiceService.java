@@ -10,10 +10,7 @@ import com.example.capstone2.Repository.SerialNumberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -87,7 +84,7 @@ public class SalesInvoiceService {
     public List<SalesInvoice> findByType(String type) throws ResourceNotFoundException, SimpleException {
         String[] validTypes = {"full_car_payment", "instalment_car_payment", "full_service_payment", "instalment_service_payment"};
 
-        if(!(type.equalsIgnoreCase("full_payment") || type.equalsIgnoreCase("instalment_payment"))) {
+        if(Arrays.stream(validTypes).noneMatch(t -> t.equalsIgnoreCase(type))) {
             throw new SimpleException("invalid type. it can only be 'full_payment' or 'instalment_payment'.");
         }
 

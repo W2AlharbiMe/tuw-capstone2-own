@@ -36,6 +36,7 @@ public class SalesPerson {
     @Column(nullable = false)
     private String password;
 
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY) // don't show the salary to others in response.
     @NotNull(message = "the salary field is required.")
     @Positive(message = "the salary must be positive number.")
     @Column(nullable = false)

@@ -5,9 +5,10 @@ import com.example.capstone2.Api.Exception.SimpleException;
 import com.example.capstone2.DTO.AddCarDTO;
 import com.example.capstone2.DTO.UpdateCarDTO;
 import com.example.capstone2.Model.Car;
-import com.example.capstone2.Model.Manufacturer;
+import com.example.capstone2.Model.SerialNumber;
 import com.example.capstone2.Repository.CarRepository;
 import com.example.capstone2.Repository.SalesInvoiceRepository;
+import com.example.capstone2.Repository.SerialNumberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +22,7 @@ public class CarService {
     private final CarRepository carRepository;
     private final ManufacturerService manufacturerService;
     private final SalesInvoiceRepository salesInvoiceRepository;
+    private final SerialNumberRepository serialNumberRepository;
 
 
     public List<Car> findAll() {
@@ -37,20 +39,20 @@ public class CarService {
         return car;
     }
 
+    public Car findCarBySerialNumber(String serialNumber) {
+        SerialNumber serialNumber1 = serialNumberRepository.findCarBySerialNumber(serialNumber);
+
+        if(serialNumber1 == null) {
+            throw new ResourceNotFoundException("serial number");
+        }
+
+        return findCarById(serialNumber1.getCarId());
+    }
+
     public void carExists(Integer id) throws SimpleException {
         if(carRepository.findCarById(id) == null) {
             throw new SimpleException("no car found with the car id you provided.");
         }
-    }
-
-    public Car findCarBySerialNumber(String serialNumber) throws ResourceNotFoundException {
-        Car car = carRepository.findCarBySerialNumber(serialNumber);
-
-        if(car == null) {
-            throw new ResourceNotFoundException("car");
-        }
-
-        return car;
     }
 
     public List<Car> findCarsByManufacturerId(Integer manufacturerId) throws SimpleException {
@@ -67,7 +69,6 @@ public class CarService {
         // make sure that there provided manufacturerId exists.
         manufacturerService.manufacturerExists(addCarDTO.getManufacturerId());
 
-
         Car car = new Car();
 
         car.setType(addCarDTO.getType().toLowerCase()); // ensure stored type not like SaDeN etc...
@@ -76,9 +77,12 @@ public class CarService {
         car.setReleaseYear(addCarDTO.getReleaseYear());
         car.setSeatsCount(addCarDTO.getSeatsCount());
         car.setManufacturerId(addCarDTO.getManufacturerId());
-        car.generateSerialNumber();
 
         Car saved_car = carRepository.save(car);
+
+        SerialNumber serialNumber = new SerialNumber();
+        serialNumber.generateSerialNumber();
+        serialNumberRepository.save(serialNumber);
 
         HashMap<String, Object> response = new HashMap<>();
         response.put("message", "the car have been added.");

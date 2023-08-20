@@ -11,6 +11,17 @@
 Add from 3-5 extra endpoint to get extra credit.
 
 
+### Project name:
+car dealership
+
+
+### Project Description:
+the car dealership REST application allow customers to buy cars, order spare parts.
+
+### Technology:
+- Java
+- Backend Framework: Spring Boot
+- Database: MariaDB
 
 
 

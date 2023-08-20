@@ -32,7 +32,7 @@ public class CarsController {
     }
 
     @GetMapping("/search/serial-number/{serialNumber}")
-    public ResponseEntity<Car> findById(@PathVariable String serialNumber) throws ResourceNotFoundException {
+    public ResponseEntity<Car> findBySerialNumber(@PathVariable String serialNumber) throws ResourceNotFoundException {
         return ResponseEntity.ok(carService.findCarBySerialNumber(serialNumber));
     }
 

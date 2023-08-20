@@ -34,9 +34,14 @@ public class SalesInvoice {
 
 
     @NotEmpty(message = "the type field is required.")
-    @Pattern(message = "the type can only be `full_payment` or `instalment_payment`", regexp = "(?i)\\b(full_payment|instalment_payment)\\b?")
-    @Column(columnDefinition = "varchar(18) not null check (type in ('full_payment', 'instalment_payment'))")
+    @Pattern(message = "the type can only be `full_car_payment`, or `instalment_car_payment`, `full_service_payment`, ``, `instalment_service_payment`.", regexp = "(?i)\\b(full_car_payment|instalment_car_payment|full_service_payment|instalment_service_payment)\\b?")
+    @Column(columnDefinition = "varchar(18) not null check (type in ('full_car_payment', 'instalment_car_payment', 'full_service_payment', 'instalment_service_payment'))")
     private String type;
+
+    @NotEmpty(message = "the status field is required.")
+    @Pattern(message = "the status can only be `pending` or `paid`.", regexp = "(?i)\\b(pending|paid)\\b?")
+    @Column(columnDefinition = "varchar(7) not null check (type in ('pending', 'paid'))")
+    private String status;
 
 
     @PositiveOrZero(message = "the instalment per month can only be a 0 or positive number.")
@@ -73,7 +78,16 @@ public class SalesInvoice {
 
 
     @Column(nullable = false)
-    private Integer salespersonId;
+    private Integer salesPersonId;
+
+    @NotNull(message = "the serial number id field is required.")
+    @Column(nullable = false, unique = true)
+    private Integer serialNumberId;
+
+
+    @Column()
+    private Integer dealerServiceId; // required only when type is service
+
 
 
     @NotNull(message = "the sub price field is required.")
@@ -81,6 +95,8 @@ public class SalesInvoice {
     @Column(nullable = false)
     private Double subPrice; // car price without vat
 
+
+    // this will be handled by jackson, and it will show it in the response.
     public Double getTotalPrice() {
         return ((subPrice * vat) + subPrice);
     }

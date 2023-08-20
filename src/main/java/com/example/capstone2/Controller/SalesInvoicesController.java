@@ -67,6 +67,11 @@ public class SalesInvoicesController {
         return ResponseEntity.ok(salesInvoiceService.lookByCustomerIdAndCarIdAndSalesPersonId(customerId, carId, salesPersonId));
     }
 
+    @GetMapping("/search/car-serial-number/{serialNumber}")
+    public ResponseEntity<HashMap<String, Object>> findBySerialNumber(@PathVariable String serialNumber) {
+        return ResponseEntity.ok(salesInvoiceService.findBySerialNumber(serialNumber));
+    }
+
 
     // POST /api/v1/sales-invoices/add?username=abdullah&password=SuperSecretPassWorD
     @PostMapping("/add")
@@ -78,14 +83,20 @@ public class SalesInvoicesController {
     // PUT /api/v1/sales-invoices/update/id/{id}?username=abdullah&password=SuperSecretPassWorD
     @PutMapping("/update/id/{id}")
     public ResponseEntity<HashMap<String, Object>> addSalesInvoiceById(@PathVariable Integer id, @RequestBody @Valid UpdateSalesInvoiceDTO updateSalesInvoiceDTO, @RequestParam("username") String username, @RequestParam("password") String password) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(salesInvoiceService.updateSalesInvoiceById(id, updateSalesInvoiceDTO, username, password));
+        return ResponseEntity.status(HttpStatus.CREATED).body(salesInvoiceService.updateInvoice(id, "", updateSalesInvoiceDTO, username, password, "id"));
+    }
+
+
+    @PutMapping("/pay-invoice/{id}")
+    public ResponseEntity<HashMap<String, Object>> payInvoice(@PathVariable Integer id) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(salesInvoiceService.payInvoice(id));
     }
 
     // update salesInvoice by invoiceUUID
     // PUT /api/v1/sales-invoices/update/invoiceUUID/{invoiceUUID}?username=abdullah&password=SuperSecretPassWorD
     @PutMapping("/update/invoiceUUID/{invoiceUUID}")
     public ResponseEntity<HashMap<String, Object>> addSalesInvoiceByInvoiceUUID(@PathVariable String invoiceUUID, @RequestBody @Valid UpdateSalesInvoiceDTO updateSalesInvoiceDTO, @RequestParam("username") String username, @RequestParam("password") String password) {
-        return ResponseEntity.ok(salesInvoiceService.updateSalesInvoiceByInvoiceUUID(invoiceUUID, updateSalesInvoiceDTO, username, password));
+        return ResponseEntity.status(HttpStatus.CREATED).body(salesInvoiceService.updateInvoice(0, invoiceUUID, updateSalesInvoiceDTO, username, password, "uuid"));
     }
 
     // DELETE /api/v1/sales-invoices/delete/{id}?username=abdullah&password=SuperSecretPassWorD

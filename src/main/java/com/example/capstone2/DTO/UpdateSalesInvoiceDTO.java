@@ -13,7 +13,7 @@ import lombok.Data;
 public class UpdateSalesInvoiceDTO {
 
     @NotEmpty(message = "the type field is required.")
-    @Pattern(message = "the type can only be `full_payment` or `instalment_payment`", regexp = "(?i)\\b(full_payment|instalment_payment)\\b?")
+    @Pattern(message = "the type can only be `full_car_payment`, or `instalment_car_payment`, `full_service_payment`, ``, `instalment_service_payment`.", regexp = "(?i)\\b(full_car_payment|instalment_car_payment|full_service_payment|instalment_service_payment)\\b?")
     private String type;
 
     @PositiveOrZero(message = "the instalment per month can only be a 0 or positive number.")

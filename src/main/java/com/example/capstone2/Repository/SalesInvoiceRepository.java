@@ -18,13 +18,15 @@ public interface SalesInvoiceRepository extends JpaRepository<SalesInvoice, Inte
 
     List<SalesInvoice> findSalesInvoiceByType(String type);
 
+    SalesInvoice findSalesInvoiceBySerialNumberId(Integer serialNumber);
+
     @Query("SELECT s FROM sales_invoices s WHERE s.carId = ?1")
     SalesInvoice lookForSalesByCarId(Integer carId);
 
-    @Query("SELECT s FROM sales_invoices s WHERE s.salespersonId = ?1")
+    @Query("SELECT s FROM sales_invoices s WHERE s.salesPersonId = ?1")
     List<SalesInvoice> lookForSalesInvoicesBySalesPersonId(Integer salespersonId);
 
-    @Query("SELECT s FROM sales_invoices s WHERE s.customerId = ?1 AND s.carId = ?2 AND s.salespersonId = ?3 ORDER BY s.id ASC LIMIT 1")
+    @Query("SELECT s FROM sales_invoices s WHERE s.customerId = ?1 AND s.carId = ?2 AND s.salesPersonId = ?3 ORDER BY s.id ASC LIMIT 1")
     SalesInvoice lookForSalesInvoiceByCustomerIdAndCarIdAndSalesPersonId(Integer customerId, Integer carId, Integer salesPersonId);
 
     @Query("SELECT s FROM sales_invoices s WHERE s.customerId = ?1 ORDER BY s.id ASC LIMIT 1")
@@ -34,6 +36,6 @@ public interface SalesInvoiceRepository extends JpaRepository<SalesInvoice, Inte
     @Query("SELECT s FROM sales_invoices s WHERE s.customerId = ?1 AND s.carId = ?2 ORDER BY s.id ASC LIMIT 1")
     SalesInvoice lookForSalesInvoiceByCustomerIdAndCarId(Integer customerId, Integer carId);
 
-    @Query("SELECT s FROM sales_invoices s WHERE s.salespersonId = ?1 ORDER BY s.id ASC LIMIT 1")
+    @Query("SELECT s FROM sales_invoices s WHERE s.salesPersonId = ?1 ORDER BY s.id ASC LIMIT 1")
     SalesInvoice atLeastOneSalesBySalesPersonId(Integer salesPersonId);
 }

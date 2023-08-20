@@ -14,6 +14,10 @@ Add from 3-5 extra endpoint to get extra credit.
 
 
 
+### Tables
+![image](https://github.com/W2AlharbiMe/tuw-capstone2-own/assets/43024659/d7ccead2-dd18-4ef3-bad6-f780bdc17adb)
+
+
 
 
 

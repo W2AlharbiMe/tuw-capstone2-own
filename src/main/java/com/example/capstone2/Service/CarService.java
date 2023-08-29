@@ -81,6 +81,7 @@ public class CarService {
         Car saved_car = carRepository.save(car);
 
         SerialNumber serialNumber = new SerialNumber();
+        serialNumber.setCarId(saved_car.getId());
         serialNumber.generateSerialNumber();
         serialNumberRepository.save(serialNumber);
 

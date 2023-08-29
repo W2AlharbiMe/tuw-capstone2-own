@@ -1,12 +1,12 @@
 package com.example.capstone2.Model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity(name = "inventory_items")
@@ -15,18 +15,6 @@ public class InventoryItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-
-
-    @NotNull(message = "the item id field is required.")
-    @Positive(message = "the item id must be positive number.")
-    @Column(unique = true)
-    private Integer itemId; // you can store cars, or parts.
-
-
-    @NotNull(message = "the inventory id field is required.")
-    @Positive(message = "the inventory id must be positive number.")
-    @Column(nullable = false)
-    private Integer inventoryId;
 
 
     @NotEmpty(message = "the type field is required.")
@@ -40,5 +28,23 @@ public class InventoryItem {
     @Min(value = 5, message = "the quantity must be at least 5.")
     @Column(nullable = false)
     private Integer quantity; // you can not store more than < maxCapacity
+
+
+    // Relations
+
+    @ManyToOne
+    @JoinColumn(name = "inventory_id", referencedColumnName = "id")
+    @JsonIgnore
+    private Inventory inventory;
+
+
+    @ManyToOne
+    @JoinColumn(name = "car_id", referencedColumnName = "id")
+    private Car car;
+
+
+    @ManyToOne
+    @JoinColumn(name = "part_id", referencedColumnName = "id")
+    private Part part;
 
 }

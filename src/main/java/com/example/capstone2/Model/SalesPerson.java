@@ -11,6 +11,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Set;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -25,18 +27,6 @@ public class SalesPerson {
     private String name;
 
 
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY) // don't show the usernames to others in response.
-    @NotEmpty(message = "the username field is required.")
-    @Column(nullable = false, unique = true)
-    private String username;
-
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY) // don't show the passwords to others in response.
-    @NotEmpty(message = "the password field is required.")
-    @Pattern(message = "the password must contain at least seven characters, at least one number and both lower and uppercase letters and special characters", regexp = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$")
-    @Column(nullable = false)
-    private String password;
-
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY) // don't show the salary to others in response.
     @NotNull(message = "the salary field is required.")
     @Positive(message = "the salary must be positive number.")
     @Column(nullable = false)
@@ -45,4 +35,14 @@ public class SalesPerson {
 
     @Column(columnDefinition = "bit(1) default 1")
     private Boolean active = true;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @MapsId
+    private User user;
+
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "salesperson")
+    @JsonIgnore
+    private Set<SalesInvoice> salesInvoices;
+
 }

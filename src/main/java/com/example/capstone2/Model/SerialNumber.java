@@ -1,14 +1,14 @@
 package com.example.capstone2.Model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity(name = "serial_numbers")
@@ -23,9 +23,14 @@ public class SerialNumber {
     @Column(nullable = false, unique = true)
     private String serialNumber;
 
-    @NotNull(message = "the car id field is required.")
-    @Column(nullable = false)
-    private Integer carId;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "serialNumber")
+    @PrimaryKeyJoinColumn
+    @JsonIgnore
+    private SalesInvoice salesInvoice;
+//
+//    @NotNull(message = "the car id field is required.")
+//    @Column(nullable = false)
+//    private Integer carId;
 
     // first part:
     // 1b2v3c4v
@@ -38,7 +43,14 @@ public class SerialNumber {
     // all combined: 1b2v3c4vXna123456
 
     @Column(columnDefinition = "bit(1) default 0")
-    private Boolean used = false;
+    private Boolean isUsed = false;
+
+
+    // Relations
+
+    @ManyToOne
+    @JoinColumn(name = "car_id", referencedColumnName = "id")
+    private Car car;
 
 
     // this should generate unique VIN.

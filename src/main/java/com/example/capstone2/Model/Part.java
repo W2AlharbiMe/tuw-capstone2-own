@@ -1,12 +1,14 @@
 package com.example.capstone2.Model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
+import java.util.Set;
+
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity(name = "parts")
@@ -27,5 +29,11 @@ public class Part {
 
     @Column(columnDefinition = "bit(1) default 0")
     private Boolean isUsed = false;
+
+    // Relation
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "part")
+    @JsonIgnore
+    private Set<InventoryItem> inventoryItems;
 
 }

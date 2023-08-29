@@ -1,16 +1,18 @@
 package com.example.capstone2.Model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
+import java.util.Set;
+
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity(name = "customers")
@@ -51,4 +53,12 @@ public class Customer {
     @Column(nullable = false)
     private Integer postalCode;
 
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @MapsId
+    private User user;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "customer")
+    @JsonIgnore
+    private Set<SalesInvoice> salesInvoices;
 }

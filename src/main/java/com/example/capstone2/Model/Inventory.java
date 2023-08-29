@@ -2,11 +2,12 @@ package com.example.capstone2.Model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
+import java.util.Set;
+
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity(name = "inventories")
@@ -32,5 +33,11 @@ public class Inventory {
     @NotEmpty(message = "the address field is required.")
     @Column(nullable = false)
     private String address;
+
+
+    // Relations
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "inventory")
+    private Set<InventoryItem> inventoryItems;
 
 }

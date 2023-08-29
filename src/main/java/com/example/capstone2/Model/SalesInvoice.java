@@ -4,10 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
@@ -17,7 +14,8 @@ import java.util.Date;
 import java.util.UUID;
 
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(toBuilder = true) // this is used to take default initialized values into account.
@@ -67,26 +65,28 @@ public class SalesInvoice {
     private Date createdAt;
 
 
-    @NotNull(message = "the car id field is required.")
-    @Column(nullable = false)
-    private Integer carId;
 
 
-    @NotNull(message = "the customer id field is required.")
-    @Column(nullable = false)
-    private Integer customerId;
+//    @NotNull(message = "the car id field is required.")
+//    @Column(nullable = false)
+//    private Integer carId;
 
 
-    @Column(nullable = false)
-    private Integer salesPersonId;
+//    @NotNull(message = "the customer id field is required.")
+//    @Column(nullable = false)
+//    private Integer customerId;
+//
+//
+//    @Column(nullable = false)
+//    private Integer salesPersonId;
 
 //    @NotNull(message = "the serial number id field is required.")
-    @Column()
-    private Integer serialNumberId;
+//    @Column()
+//    private Integer serialNumberId;
 
-
-    @Column()
-    private Integer dealerServiceId; // required only when type is service
+//
+//    @Column()
+//    private Integer dealerServiceId; // required only when type is service
 
 
 
@@ -101,4 +101,30 @@ public class SalesInvoice {
         return ((subPrice * vat) + subPrice);
     }
 
+
+    // Relations
+
+    @ManyToOne
+    @JoinColumn(name = "car_id", referencedColumnName = "id")
+    private Car car;
+
+
+    @ManyToOne
+    @JoinColumn(name = "dealer_service_id", referencedColumnName = "id")
+    private DealerService dealerService;
+
+
+    @ManyToOne
+    @JoinColumn(name = "sales_person_id", referencedColumnName = "user_id")
+    private SalesPerson salesperson;
+
+
+    @ManyToOne
+    @JoinColumn(name = "customer_id", referencedColumnName = "user_id")
+    private Customer customer;
+
+
+    @OneToOne
+    @MapsId
+    private SerialNumber serialNumber;
 }

@@ -40,7 +40,7 @@ public class SalesInvoice {
 
     @NotEmpty(message = "the status field is required.")
     @Pattern(message = "the status can only be `pending` or `paid`.", regexp = "(?i)\\b(pending|paid)\\b?")
-    @Column(columnDefinition = "varchar(7) not null check (type in ('pending', 'paid'))")
+    @Column(columnDefinition = "varchar(8) not null check (status in ('pending', 'paid'))")
     private String status;
 
 
@@ -80,8 +80,8 @@ public class SalesInvoice {
     @Column(nullable = false)
     private Integer salesPersonId;
 
-    @NotNull(message = "the serial number id field is required.")
-    @Column(nullable = false, unique = true)
+//    @NotNull(message = "the serial number id field is required.")
+    @Column()
     private Integer serialNumberId;
 
 

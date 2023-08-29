@@ -24,7 +24,7 @@ the car dealership REST application allow customers to buy cars, order spare par
 
 
 
-### Tables
+### Entity Relationshsip Diagram
 ![Blank diagram](https://github.com/W2AlharbiMe/tuw-capstone2-own/assets/43024659/af1f6ce2-1dac-4e53-abf7-5ec8e7f91620)
 
 

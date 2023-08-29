@@ -168,11 +168,13 @@ public class SalesInvoiceService {
         salesInvoice.setSalesPersonId(salesPerson.getId());
         salesInvoice.setInvoiceUUID(UUID.randomUUID().toString());
 
+//        SerialNumber serialNumber = serialNumberRepository.latestUnusedSerialNumberByCarId(salesInvoice.getCarId());
+//        serialNumber.setUsed(true);
+//        serialNumberRepository.save(serialNumber);
+
+
         SalesInvoice salesInvoice1 = salesInvoiceRepository.save(salesInvoice);
 
-        SerialNumber serialNumber = serialNumberRepository.latestUnusedSerialNumberByCarId(salesInvoice.getCarId());
-        serialNumber.setUsed(true);
-        serialNumberRepository.save(serialNumber);
 
         Car car = carService.findCarById(salesInvoice.getCarId());
         Customer customer = customerService.findById(salesInvoice.getCustomerId());
@@ -184,7 +186,7 @@ public class SalesInvoiceService {
         response.put("salesInvoice", salesInvoice1);
         response.put("car", car);
         response.put("customer", customer);
-        response.put("serialNumber", serialNumber);
+//        response.put("serialNumber", serialNumber);
         response.put("salesPerson", salesPerson);
 
         return response;

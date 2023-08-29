@@ -149,6 +149,10 @@ public class InventoryItemService {
 
         Integer totalStoredItems = inventoryItemRepository.totalItemsInInventory(inventory.getId());
 
+        if(totalStoredItems == null) {
+            totalStoredItems = 0;
+        }
+
         if(Objects.equals(totalStoredItems, inventory.getMaxCapacity()) || totalStoredItems >= inventory.getMaxCapacity()) {
             throw new SimpleException("this inventory is full.");
         }

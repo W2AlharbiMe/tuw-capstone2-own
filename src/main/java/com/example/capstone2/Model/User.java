@@ -55,11 +55,6 @@ public class User implements UserDetails {
     private SalesPerson salesperson;
 
 
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
-    @PrimaryKeyJoinColumn
-    @JsonIgnore
-    private Customer customer;
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singleton(new SimpleGrantedAuthority(role));

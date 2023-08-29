@@ -2,15 +2,19 @@ package com.example.capstone2.Service;
 
 import com.example.capstone2.Api.Exception.ResourceNotFoundException;
 import com.example.capstone2.Api.Exception.SimpleException;
-import com.example.capstone2.DTO.UpdateSalesInvoiceDTO;
+import com.example.capstone2.DTO.SalesInvoiceDTO;
 import com.example.capstone2.Model.*;
 import com.example.capstone2.Repository.InventoryItemRepository;
 import com.example.capstone2.Repository.SalesInvoiceRepository;
+import com.example.capstone2.Repository.SalesPersonRepository;
 import com.example.capstone2.Repository.SerialNumberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +26,8 @@ public class SalesInvoiceService {
     private final SalesPersonService salesPersonService;
     private final InventoryItemRepository inventoryItemRepository;
     private final SerialNumberRepository serialNumberRepository;
+    private final SalesPersonRepository salesPersonRepository;
+
 
 
     public List<SalesInvoice> findAll() {
@@ -66,9 +72,9 @@ public class SalesInvoiceService {
         }
 
         SalesInvoice salesInvoice = salesInvoiceRepository.findSalesInvoiceBySerialNumberId(serialNumber1.getId());
-        Car car = carService.findCarById(serialNumber1.getCarId());
-        Customer customer = customerService.findById(salesInvoice.getCustomerId());
-        SalesPerson salesPerson = salesPersonService.findById(salesInvoice.getSalesPersonId());
+        Car car = carService.findCarById(serialNumber1.getCar().getId());
+        Customer customer = customerService.findById(salesInvoice.getCustomer().getId());
+        SalesPerson salesPerson = salesPersonService.findById(salesInvoice.getSalesperson().getId());
 
         HashMap<String, Object> response = new HashMap<>();
         response.put("salesInvoice", salesInvoice);
@@ -154,30 +160,31 @@ public class SalesInvoiceService {
         return response;
     }
 
-    public HashMap<String, Object> addSalesInvoice(SalesInvoice salesInvoice, String username, String password) throws SimpleException {
-        SalesPerson salesPerson = salesPersonLogin(username, password);
+    public HashMap<String, Object> addSalesInvoice(SalesInvoiceDTO salesInvoiceDTO, User user) throws SimpleException {
+        carService.carExists(salesInvoiceDTO.getCarId());
 
-        carService.carExists(salesInvoice.getCarId());
+        InventoryItem inventoryItem = getInventoryItemByCarId(salesInvoiceDTO.getCarId());
 
-        InventoryItem inventoryItem = getInventoryItemByCarId(salesInvoice.getCarId());
-
-        customerService.customerExists(salesInvoice.getCustomerId());
+        customerService.customerExists(salesInvoiceDTO.getCustomerId());
 
         // car sub price * 5% = bonus
+        SalesInvoice salesInvoice = new SalesInvoice();
+        SalesPerson salesPerson = salesPersonRepository.findSalesPersonById(user.getId());
+
         salesInvoice.setSalesPersonBonus(salesInvoice.getSubPrice() * salesInvoice.getSalesPersonBonus());
-        salesInvoice.setSalesPersonId(salesPerson.getId());
+        salesInvoice.setSalesperson(salesPerson);
         salesInvoice.setInvoiceUUID(UUID.randomUUID().toString());
 
-//        SerialNumber serialNumber = serialNumberRepository.latestUnusedSerialNumberByCarId(salesInvoice.getCarId());
-//        serialNumber.setUsed(true);
-//        serialNumberRepository.save(serialNumber);
+        SerialNumber serialNumber = serialNumberRepository.latestUnusedSerialNumberByCarId(salesInvoice.getCar().getId());
+        serialNumber.setIsUsed(true);
+        serialNumberRepository.save(serialNumber);
 
 
         SalesInvoice salesInvoice1 = salesInvoiceRepository.save(salesInvoice);
 
 
-        Car car = carService.findCarById(salesInvoice.getCarId());
-        Customer customer = customerService.findById(salesInvoice.getCustomerId());
+        Car car = carService.findCarById(salesInvoice.getCar().getId());
+        Customer customer = customerService.findById(salesInvoice.getCustomer().getId());
 
         inventoryItemOperation(false, inventoryItem);
 
@@ -192,75 +199,11 @@ public class SalesInvoiceService {
         return response;
     }
 
-    public HashMap<String, Object> updateInvoice(Integer id, String UUID, UpdateSalesInvoiceDTO updateSalesInvoiceDTO, String username, String password, String field) throws ResourceNotFoundException, SimpleException {
-        // make sure invoice exists.
-        SalesInvoice saved_salesInvoice = field.equalsIgnoreCase("id") ? findById(id) : findByInvoiceUUID(UUID);
-
-        // make sure the status is not paid.
-        if(saved_salesInvoice.getStatus().equalsIgnoreCase("paid")) {
-            throw new SimpleException("you can not update a paid invoice.");
-        }
-
-        // make sure sales person credentials are correct
-        SalesPerson salesPerson = salesPersonLogin(username, password);
-
-        // make sure car exists.
-        carService.carExists(updateSalesInvoiceDTO.getCarId());
-
-        // make sure sales person is the same who created this invoice.
-        if(!Objects.equals(saved_salesInvoice.getSalesPersonId(), salesPerson.getId())) {
-            throw new SimpleException("you don't have permissions to update this invoice. this is not your invoice.");
-        }
-
-        // make sure there's inventory and quantity of the car
-        InventoryItem inventoryItem = getInventoryItemByCarId(updateSalesInvoiceDTO.getCarId());
-        InventoryItem old_inventoryItem = getInventoryItemByCarId(saved_salesInvoice.getCarId());
-
-        inventoryItemOperation(true, old_inventoryItem);
-        inventoryItemOperation(false, inventoryItem);
-
-        SerialNumber serialNumber = serialNumberRepository.findSerialNumberById(saved_salesInvoice.getSerialNumberId());
-        serialNumber.setUsed(false);
-        serialNumberRepository.save(serialNumber);
-
-        saved_salesInvoice.setCarId(updateSalesInvoiceDTO.getCarId());
-        saved_salesInvoice.setSubPrice(updateSalesInvoiceDTO.getSubPrice());
-        saved_salesInvoice.setType(updateSalesInvoiceDTO.getType());
-        saved_salesInvoice.setInstalmentPerMonth(updateSalesInvoiceDTO.getInstalmentPerMonth());
-
-        salesInvoiceRepository.save(saved_salesInvoice);
-
-        SerialNumber serialNumber1 = serialNumberRepository.latestUnusedSerialNumberByCarId(saved_salesInvoice.getCarId());
-        serialNumber1.setUsed(true);
-        serialNumberRepository.save(serialNumber1);
-
-        HashMap<String, Object> response = new HashMap<>();
-        response.put("message", "the sales invoice have been updated.");
-        response.put("salesInvoice", saved_salesInvoice);
-        response.put("car", carService.findCarById(saved_salesInvoice.getCarId()));
-        response.put("salesPerson", salesPerson);
-        response.put("inventoryItem", inventoryItem); // this is the new target car inventory item
-        response.put("serialNumber", serialNumber1); // this is the new target car inventory item
-
-
-        return response;
-    }
-
-
-    private SalesPerson salesPersonLogin(String username, String password) throws SimpleException {
-        SalesPerson salesPerson = salesPersonService.login(username, password);
-
-        if(salesPerson == null) {
-            throw new SimpleException("username or password is invalid.");
-        }
-
-        return salesPerson;
-    }
 
     private InventoryItem getInventoryItemByCarId(Integer carId) throws ResourceNotFoundException {
-        InventoryItem inventoryItem = inventoryItemRepository.findByItemIdAndType(carId, "car");
+        List<InventoryItem> inventoryItem = inventoryItemRepository.findInventoryItemsByCarId(carId);
 
-        if(inventoryItem == null) {
+        if(inventoryItem.isEmpty()) {
             throw new ResourceNotFoundException("inventory item");
         }
 
@@ -269,26 +212,6 @@ public class SalesInvoiceService {
         }
 
         return inventoryItem;
-    }
-
-    public HashMap<String, Object> deleteSalesInvoice(Integer id, String username, String password) throws ResourceNotFoundException {
-        // make sure the sales person who provided their credentials
-        // is the one who actually created the invoice.
-        SalesPerson salesPerson = salesPersonLogin(username, password);
-
-        SalesInvoice salesInvoice = findById(id);
-
-        if(!Objects.equals(salesInvoice.getSalesPersonId(), salesPerson.getId())) {
-            throw new SimpleException("you don't have permissions to delete this invoice. this is not your invoice.");
-        }
-
-        salesInvoiceRepository.deleteById(id);
-
-        HashMap<String, Object> response = new HashMap<>();
-        response.put("message", "the sales invoice have been deleted.");
-        response.put("salesInvoice", salesInvoice);
-
-        return response;
     }
 
     private void inventoryItemOperation(Boolean increment, InventoryItem inventoryItem) {

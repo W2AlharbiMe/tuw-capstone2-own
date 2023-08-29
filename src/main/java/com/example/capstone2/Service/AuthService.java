@@ -50,31 +50,4 @@ public class AuthService {
     }
 
 
-    public Customer createCustomer(CustomerDTO customerDTO) {
-
-        if(authRepository.findUserByUsername(customerDTO.getUsername()) != null) {
-            throw new SimpleException("use another username.");
-        }
-
-
-        User user = new User();
-        user.setUsername(customerDTO.getUsername());
-        user.setPassword((new BCryptPasswordEncoder()).encode(customerDTO.getPassword()));
-        user.setEmail(customerDTO.getEmail());
-        user.setRole("CUSTOMER");
-        User user1 = authRepository.save(user);
-
-        Customer customer = new Customer();
-
-        customer.setCountry(customerDTO.getCountry());
-        customer.setName(customerDTO.getName());
-        customer.setAddress(customerDTO.getAddress());
-        customer.setCity(customerDTO.getCity());
-        customer.setPhoneNumber(customerDTO.getCity());
-        customer.setPostalCode(customerDTO.getPostalCode());
-        customer.setNationalIdentity(customerDTO.getNationalIdentity());
-        customer.setUser(user1);
-
-        return customerRepository.save(customer);
-    }
 }

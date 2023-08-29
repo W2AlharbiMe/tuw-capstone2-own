@@ -2,11 +2,13 @@ package com.example.capstone2.Controller;
 
 import com.example.capstone2.DTO.UpdateSalesPersonDTO;
 import com.example.capstone2.Model.SalesPerson;
+import com.example.capstone2.Model.User;
 import com.example.capstone2.Service.SalesPersonService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -35,18 +37,10 @@ public class SalesPersonsController {
         return ResponseEntity.ok(salesPersonService.searchByName(name));
     }
 
-    @PostMapping("/add")
-    public ResponseEntity<HashMap<String, Object>> addSalesPerson(@RequestBody @Valid SalesPerson salesPerson) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(salesPersonService.addSalesPerson(salesPerson));
-    }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<HashMap<String, Object>> updateSalesPerson(@PathVariable Integer id, @RequestBody @Valid UpdateSalesPersonDTO updateSalesPersonDTO) {
-        return ResponseEntity.ok(salesPersonService.updateSalesPerson(id, updateSalesPersonDTO));
+    public ResponseEntity<HashMap<String, Object>> updateSalesPerson(@PathVariable Integer id, @RequestBody @Valid UpdateSalesPersonDTO updateSalesPersonDTO, @AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(salesPersonService.updateSalesPerson(id, updateSalesPersonDTO, user));
     }
 
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<HashMap<String, Object>> deleteSalesPerson(@PathVariable Integer id) {
-        return ResponseEntity.ok(salesPersonService.deleteSalesPerson(id));
-    }
 }

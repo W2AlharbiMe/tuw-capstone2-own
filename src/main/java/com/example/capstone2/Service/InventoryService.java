@@ -2,7 +2,6 @@ package com.example.capstone2.Service;
 
 import com.example.capstone2.Api.Exception.ResourceNotFoundException;
 import com.example.capstone2.Api.Exception.SimpleException;
-import com.example.capstone2.Api.Response.SimpleApiResponse;
 import com.example.capstone2.DTO.UpdateInventoryDTO;
 import com.example.capstone2.Model.Inventory;
 import com.example.capstone2.Repository.InventoryItemRepository;

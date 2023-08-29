@@ -22,9 +22,9 @@ public interface InventoryItemRepository extends JpaRepository<InventoryItem, In
 
     List<InventoryItem> findInventoryItemsByType(String type);
 
-    List<InventoryItem> findInventoryItemsByCar(Car car);
+    List<InventoryItem> findInventoryItemsByCarId(Integer id);
 
-    List<InventoryItem> findInventoryItemsByPart(Part part);
+    List<InventoryItem> findInventoryItemsByPartId(Integer id);
 
 
     @Query("SELECT i FROM inventory_items i WHERE i.inventory.id = ?1 ORDER BY i.id ASC LIMIT 1")

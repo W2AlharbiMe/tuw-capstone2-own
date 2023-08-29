@@ -54,10 +54,6 @@ public class Customer {
     private Integer postalCode;
 
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @MapsId
-    private User user;
-
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "customer")
     @JsonIgnore
     private Set<SalesInvoice> salesInvoices;

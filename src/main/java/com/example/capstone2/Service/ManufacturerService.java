@@ -39,7 +39,7 @@ public class ManufacturerService {
             throw new SimpleException("no manufacturer found with the manufacturer id you provided.");
         }
     }
-
+//
     public List<Manufacturer> searchByName(String name) throws ResourceNotFoundException {
         List<Manufacturer> manufacturers = manufacturerRepository.lookByName(name);
 
@@ -49,7 +49,7 @@ public class ManufacturerService {
 
         return manufacturers;
     }
-
+//
     public HashMap<String, Object> addManufacturer(Manufacturer manufacturer) throws SimpleException {
         if(manufacturerRepository.findManufacturerByName(manufacturer.getName()) != null) {
             throw new SimpleException("there's a manufacturer with the same name.");

@@ -5,8 +5,10 @@ import com.example.capstone2.Api.Exception.SimpleException;
 import com.example.capstone2.DTO.AddCarDTO;
 import com.example.capstone2.DTO.UpdateCarDTO;
 import com.example.capstone2.Model.Car;
+import com.example.capstone2.Model.Manufacturer;
 import com.example.capstone2.Model.SerialNumber;
 import com.example.capstone2.Repository.CarRepository;
+import com.example.capstone2.Repository.ManufacturerRepository;
 import com.example.capstone2.Repository.SalesInvoiceRepository;
 import com.example.capstone2.Repository.SerialNumberRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +22,8 @@ import java.util.List;
 public class CarService {
 
     private final CarRepository carRepository;
-    private final ManufacturerService manufacturerService;
+//    private final ManufacturerService manufacturerService;
+    private final ManufacturerRepository manufacturerRepository;
     private final SalesInvoiceRepository salesInvoiceRepository;
     private final SerialNumberRepository serialNumberRepository;
 
@@ -46,7 +49,7 @@ public class CarService {
             throw new ResourceNotFoundException("serial number");
         }
 
-        return findCarById(serialNumber1.getCarId());
+        return findCarById(serialNumber1.getCar().getId());
     }
 
     public void carExists(Integer id) throws SimpleException {
@@ -66,8 +69,12 @@ public class CarService {
     }
 
     public HashMap<String, Object> addCar(AddCarDTO addCarDTO) throws SimpleException {
-        // make sure that there provided manufacturerId exists.
-        manufacturerService.manufacturerExists(addCarDTO.getManufacturerId());
+
+
+        Manufacturer manufacturer = manufacturerRepository.findManufacturerById(addCarDTO.getManufacturerId());
+        if(manufacturer == null) {
+            throw new SimpleException("manufacturer not found.");
+        }
 
         Car car = new Car();
 
@@ -76,12 +83,15 @@ public class CarService {
         car.setModel(addCarDTO.getModel());
         car.setReleaseYear(addCarDTO.getReleaseYear());
         car.setSeatsCount(addCarDTO.getSeatsCount());
-        car.setManufacturerId(addCarDTO.getManufacturerId());
+
+        car.setManufacturer(manufacturer);
 
         Car saved_car = carRepository.save(car);
 
         SerialNumber serialNumber = new SerialNumber();
-        serialNumber.setCarId(saved_car.getId());
+
+        serialNumber.setCar(saved_car);
+
         serialNumber.generateSerialNumber();
         serialNumberRepository.save(serialNumber);
 
@@ -99,15 +109,18 @@ public class CarService {
             throw new ResourceNotFoundException("car");
         }
 
-        // this will throw SimpleException in case no Manufacturer with manufacturer id
-        manufacturerService.manufacturerExists(updateCarDTO.getManufacturerId());
+        Manufacturer manufacturer = manufacturerRepository.findManufacturerById(updateCarDTO.getManufacturerId());
+        if(manufacturer == null) {
+            throw new SimpleException("manufacturer not found.");
+        }
+
 
         car.setModel(updateCarDTO.getModel());
         car.setType(updateCarDTO.getType());
         car.setColor(updateCarDTO.getColor());
         car.setSeatsCount(updateCarDTO.getSeatsCount());
         car.setReleaseYear(updateCarDTO.getReleaseYear());
-        car.setManufacturerId(updateCarDTO.getManufacturerId());
+        car.setManufacturer(manufacturer);
 
         carRepository.save(car);
 

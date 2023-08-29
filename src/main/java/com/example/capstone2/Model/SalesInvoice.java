@@ -67,26 +67,11 @@ public class SalesInvoice {
 
 
 
-//    @NotNull(message = "the car id field is required.")
-//    @Column(nullable = false)
-//    private Integer carId;
 
-
-//    @NotNull(message = "the customer id field is required.")
-//    @Column(nullable = false)
-//    private Integer customerId;
-//
-//
-//    @Column(nullable = false)
-//    private Integer salesPersonId;
 
 //    @NotNull(message = "the serial number id field is required.")
 //    @Column()
 //    private Integer serialNumberId;
-
-//
-//    @Column()
-//    private Integer dealerServiceId; // required only when type is service
 
 
 
@@ -120,7 +105,7 @@ public class SalesInvoice {
 
 
     @ManyToOne
-    @JoinColumn(name = "customer_id", referencedColumnName = "user_id")
+    @JoinColumn(name = "customer_id", referencedColumnName = "id")
     private Customer customer;
 
 

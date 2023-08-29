@@ -2,11 +2,8 @@ package com.example.capstone2.Service;
 
 import com.example.capstone2.Api.Exception.ResourceNotFoundException;
 import com.example.capstone2.DTO.UpdateDealerServiceDTO;
-import com.example.capstone2.DTO.UpdatePartDTO;
 import com.example.capstone2.Model.DealerService;
-import com.example.capstone2.Model.Part;
 import com.example.capstone2.Repository.DealerServiceRepository;
-import com.example.capstone2.Repository.PartRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

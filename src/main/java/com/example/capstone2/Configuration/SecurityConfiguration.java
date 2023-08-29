@@ -49,8 +49,7 @@ public class SecurityConfiguration {
                 .requestMatchers("/api/v1/parts/**").hasAuthority("SALES_PERSON")
                 .requestMatchers("/api/v1/sales-invoices/**").hasAuthority("SALES_PERSON")
                 .requestMatchers("/api/v1/sales-persons/**").hasAuthority("SALES_PERSON")
-
-                .requestMatchers("/api/v1/customers/**").hasAuthority("CUSTOMER")
+                .requestMatchers("/api/v1/customers/**").hasAuthority("SALES_PERSON")
 
 
                 .anyRequest().authenticated()

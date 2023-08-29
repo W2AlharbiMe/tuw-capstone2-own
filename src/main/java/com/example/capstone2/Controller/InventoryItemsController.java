@@ -29,18 +29,18 @@ public class InventoryItemsController {
     }
 
     @GetMapping("/search/item-id/{itemId}")
-    private ResponseEntity<InventoryItem> findOneByItemId(@PathVariable Integer itemId) {
+    private ResponseEntity<List<InventoryItem>> findOneByItemId(@PathVariable Integer itemId) {
         return ResponseEntity.ok(inventoryItemService.findByItemId(itemId));
     }
 
     @GetMapping("/search/{type}/{itemId}")
-    private ResponseEntity<InventoryItem> findOneByItemId(@PathVariable String type, @PathVariable Integer itemId) {
-        return ResponseEntity.ok(inventoryItemService.findByItemIdAndType(itemId, type));
+    private ResponseEntity<List<InventoryItem>> findOneByItemId(@PathVariable String type, @PathVariable Integer itemId) {
+        return ResponseEntity.ok(inventoryItemService.findByItemIdAndType(type));
     }
 
     @PostMapping("/add")
-    private ResponseEntity<HashMap<String, Object>> addItem(@RequestBody @Valid InventoryItem inventoryItem) {
-        return ResponseEntity.ok(inventoryItemService.addInventoryItem(inventoryItem));
+    private ResponseEntity<HashMap<String, Object>> addItem(@RequestBody @Valid UpdateInventoryItemDTO updateInventoryItemDTO) {
+        return ResponseEntity.ok(inventoryItemService.addInventoryItem(updateInventoryItemDTO));
     }
 
     @PutMapping("/update/{id}")

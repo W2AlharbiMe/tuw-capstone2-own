@@ -22,11 +22,6 @@ public class AuthController {
 
     // I know that I should create 1 sign up that will create the user
     // and then the other endpoints to update the customer however due to the insane deadline I decided doing it this way.
-    @PostMapping("/create/customer")
-    public ResponseEntity<ApiResponseWithData<Customer>> createCustomer(@RequestBody @Valid CustomerDTO customerDTO) {
-        return ResponseEntity.ok((new ApiResponseWithData<>("created.", authService.createCustomer(customerDTO))));
-    }
-
     @PostMapping("/create/sales-person")
     public ResponseEntity<ApiResponseWithData<SalesPerson>> createSalesPerson(@RequestBody @Valid SalesPersonDTO salesPersonDTO) {
         return ResponseEntity.ok((new ApiResponseWithData<>("created.", authService.createSalesPerson(salesPersonDTO))));
